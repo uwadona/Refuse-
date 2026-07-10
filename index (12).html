@@ -1,0 +1,1096 @@
+<!DOCTYPE html>  <html lang="en">  
+<head>  
+<meta charset="UTF-8">  
+<meta name="viewport" content="width=device-width, initial-scale=1.0">  
+<title>RWACONNECT</title>  
+<script src="https://cdn.tailwindcss.com"></script>  
+</head>  <body class="bg-yellow-50">
+<div id="login-screen" class="max-w-md mx-auto mt-20 bg-white p-6 rounded-lg shadow">
+
+<input id="usernameInput" type="text" placeholder="Username"
+class="w-full border p-2 rounded mb-2">  <input id="emailInput" type="email" placeholder="Email"
+         class="w-full border p-2 rounded mb-2">
+
+  <input id="passwordInput" type="password" placeholder="Password"
+         class="w-full border p-2 rounded mb-3">
+
+  <button onclick="signIn()"
+          class="w-full bg-blue-700 text-white py-2 rounded mb-2">
+    Sign In
+  </button>
+
+  <button onclick="signUp()"
+          class="w-full bg-green-600 text-white py-2 rounded">
+    Sign Up
+  </button>
+</div>
+
+<div id="app-screen" style="display:none;">  
+  <div class="max-w-3xl mx-auto pb-20">    <!-- TOP BAR - BLUE -->    <div class="bg-blue-700 text-white p-3 flex justify-around sticky top-0 z-10 shadow-lg">  
+
+    <button onclick="showTab('home')" class="font-bold">🏠 Home</button>  
+    <button onclick="showTab('chat')" class="font-bold">💬 Chat</button>  
+    <button onclick="showTab('notif')" class="font-bold">🔔 <span id="notifCount" class="bg-green-500 rounded-full px-2 text-xs">0</span></button>  
+<button onclick="openMyProfile()" class="font-bold">👤 Profile</button>
+<button onclick="showTab('search'); alert('Search clicked')" class="font-bold">
+🔍 Search
+</button>
+  </div>   
+<button onclick="showTab('education')"
+class="bg-blue-700 text-white px-4 py-2 rounded-lg font-bold m-1">
+📚 Education
+</button><!-- HOME TAB -->    <div id="home-tab">  
+    <div class="bg-white p-4 m-4 rounded-lg shadow border-l-4 border-green-600">  
+      <h1 class="text-2xl font-bold text-blue-700 text-center mb-3">RWACONNECT</h1>  
+      <textarea id="postContent" class="w-full border-2 border-yellow-400 p-2 rounded" placeholder="What's on your mind?"></textarea>  
+<input type="file" id="fileInput" accept="image/*,video/*" class="w-full mt-2 border p-1 rounded">  
+<button id="postBtn" class="w-full mt-3 bg-blue-700 text-white py-2 rounded-lg font-bold">POST</button>  
+    </div>  
+    <div id="feed" class="m-4"></div>  
+  </div>    <!-- PROFILE TAB -->    <div id="profile-tab" style="display:none;">  
+    <div class="bg-white p-4 m-4 rounded-lg shadow border-t-4 border-green-600 text-center">  
+<img id="profileImage" src="https://i.pravatar.cc/150" class="w-24 h-24 rounded-full mx-auto border-4 border-blue-700">
+
+<input type="file" id="profilePicInput" accept="image/*" class="w-full mt-3 border p-2 rounded">
+
+<button onclick="uploadProfilePic()" class="bg-blue-700 text-white px-5 py-2 rounded mt-2">
+  Change Profile Picture
+</button>
+      <h2 id="profileName" class="font-bold text-xl mt-2 text-blue-700">User</h2>
+<button id="followBtn" onclick="toggleFollow(targetUserId)">
+  FOLLOW
+</button>
+      <button onclick="showTab('chat')" class="bg-blue-700 text-white px-6 py-2 rounded-lg mt-3 font-bold">
+  MESSAGE
+</button>
+      <p class="mt-3 text-green-700 font-bold"><span id="followersCount">0</span> Followers | <span id="followingCount">0</span> Following</p>  
+    </div>  
+  </div>    <!-- CHAT TAB -->    <div id="chat-tab" style="display:none;">  
+    <div class="bg-white p-4 m-4 rounded-lg shadow border-l-4 border-yellow-400">  
+      <h2 class="font-bold text-xl text-blue-700 mb-3">Messages</h2>  
+      <div id="inboxList" class="mb-3"></div>
+      <div id="chatBox" class="h-80 overflow-y-auto border-2 border-green-600 p-2 rounded mb-2"></div>  
+      <div class="flex gap-2">  
+        <input id="messageInput" class="w-full border-2 border-yellow-400 p-2 rounded" placeholder="Type a message...">  
+        <button onclick="sendMessage()" class="bg-green-600 text-white px-4 rounded-lg font-bold">SEND</button>  
+      </div>  
+    </div>  
+  </div>    <!-- NOTIFICATION TAB -->    <div id="notif-tab" style="display:none;">  
+    <div class="bg-white p-4 m-4 rounded-lg shadow border-t-4 border-blue-700">  
+      <h2 class="font-bold text-xl text-blue-700 mb-3">Notifications</h2>  
+      <div id="notifications-list"><p class="text-gray-400">No notifications yet</p></div>  
+    </div></div>  
+<div id="search-tab" style="display:block;">
+  <div class="bg-white p-4 m-4 rounded-lg shadow">
+    <input
+      id="searchInput"
+      type="text"
+      placeholder="Search username..."
+      class="w-full border p-2 rounded">
+
+    <button onclick="searchUsers()"
+      class="w-full mt-2 bg-blue-700 text-white py-2 rounded">
+      Search
+    </button>
+
+    <div id="searchResults" class="mt-3"></div>
+  </div>
+</div>
+  </div>  </div>  
+
+<!-- EDUCATION TAB -->
+<div id="education-tab" style="display:block;">
+
+  <div class="bg-white p-4 m-4 rounded-lg shadow border-t-4 border-blue-700">
+
+    <h2 class="text-2xl font-bold text-blue-700 mb-4">
+      📚 Education AI
+    </h2>
+
+<button id="openLessonBtn" class="bg-green-600 text-white w-full p-3 rounded-lg mb-3 hover:bg-green-700">
+  📝 Lesson Plan
+</button>
+
+<button id="openQuizBtn" class="bg-blue-600 text-white w-full p-3 rounded-lg mb-3">
+  ❓ Quiz Generator
+</button>
+
+    <button class="bg-purple-600 text-white w-full p-3 rounded-lg mb-3">
+      📖 Notes Generator
+    </button>
+
+<button id="openAskAIBtn" class="bg-orange-600 text-white w-full p-3 rounded-lg">
+  💬 Ask AI
+</button>
+
+  </div>
+
+<!-- ADD STEP 2 HERE -->
+<div id="lesson-plan-box" style="display:none;" class="mt-4 m-4 bg-white p-4 rounded-lg shadow border">
+
+  <h3 class="text-xl font-bold text-green-700 mb-3">
+    📝 Create Lesson Plan - Rwanda CBC
+  </h3>
+
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-3">
+    <input id="schoolName" class="w-full border p-2 rounded" placeholder="School Name">
+    <input id="teacherName" class="w-full border p-2 rounded" placeholder="Teacher's name">
+    <input id="term" class="w-full border p-2 rounded" placeholder="Term">
+    <input id="date" type="date" class="w-full border p-2 rounded">
+    <input id="subject" class="w-full border p-2 rounded" placeholder="Subject">
+    <input id="classGrade" class="w-full border p-2 rounded" placeholder="Class">
+    <input id="unitNo" class="w-full border p-2 rounded" placeholder="Unit No">
+    <input id="lessonNo" class="w-full border p-2 rounded" placeholder="Lesson No">
+    <input id="duration" class="w-full border p-2 rounded" placeholder="Duration e.g 40 min">
+    <input id="classSize" class="w-full border p-2 rounded" placeholder="Class size">
+  </div>
+
+  <input id="specialNeeds" class="w-full border p-2 rounded mb-2" placeholder="Type of Special Educational Needs">
+  <input id="unitTitle" class="w-full border p-2 rounded mb-2" placeholder="Unit title">
+  <textarea id="keyCompetence" class="w-full border p-2 rounded mb-2" rows="2" placeholder="Key Unit Competence"></textarea>
+  <input id="lessonTitle" class="w-full border p-2 rounded mb-2" placeholder="Title of the lesson">
+  <textarea id="objective" class="w-full border p-2 rounded mb-2" rows="2" placeholder="Instructional Objective"></textarea>
+  <input id="planClass" class="w-full border p-2 rounded mb-2" placeholder="Plan for this Class">
+  <input id="materials" class="w-full border p-2 rounded mb-2" placeholder="Learning Materials">
+  <input id="references" class="w-full border p-2 rounded mb-2" placeholder="References">
+
+  <button id="genBtn" class="bg-green-700 text-white w-full p-3 rounded-lg hover:bg-green-800">
+    Generate Lesson Plan
+  </button>
+
+  <div id="lessonResult" class="mt-4 p-3 bg-white rounded border"></div>
+  <button onclick="window.print()" id="printBtn" class="bg-blue-700 text-white w-full p-3 rounded-lg mt-3 hidden hover:bg-blue-800">🖨️ Print / Save PDF</button>
+
+</div></div>
+<!-- QUIZ GENERATOR BOX -->
+<div id="quiz-box" style="display:none;" class="mt-4 m-4 bg-white p-4 rounded-lg shadow border">
+
+<h3 class="text-xl font-bold text-blue-700 mb-3">
+❓ Create Quiz
+</h3>
+
+<input id="quizSubject" class="w-full border p-2 rounded mb-2" placeholder="Subject">
+
+<input id="quizClass" class="w-full border p-2 rounded mb-2" placeholder="Class">
+
+<input id="quizTopic" class="w-full border p-2 rounded mb-2" placeholder="Topic">
+
+<input id="quizNumber" type="number" value="5" class="w-full border p-2 rounded mb-2">
+
+<button id="generateQuizBtn" class="bg-blue-700 text-white w-full p-3 rounded">
+Generate Quiz
+</button>
+
+<div id="quizResult" class="mt-4"></div>
+
+</div><div id="ask-ai-box" style="display:none;" class="mt-4 m-4 bg-white p-4 rounded-lg shadow border">
+
+<h3 class="text-xl font-bold text-orange-700 mb-3">
+💬 Ask AI
+</h3>
+
+<textarea id="aiQuestion" class="w-full border p-2 rounded mb-2" 
+placeholder="Ask your question"></textarea>
+
+<button id="askAIBtn" class="bg-orange-700 text-white w-full p-3 rounded">
+Ask AI
+</button>
+
+<div id="aiResult" class="mt-4 p-3 border rounded"></div>
+
+</div>
+
+<script>
+// WAIT FOR PAGE TO LOAD FIRST
+document.addEventListener('DOMContentLoaded', function() {
+  
+  // BUTTON 1: OPEN FORM
+  document.getElementById('openLessonBtn').addEventListener('click', function() {
+    document.getElementById('lesson-plan-box').style.display = 'block';
+    console.log('Lesson form opened');
+  });
+
+  // BUTTON 2: GENERATE
+  document.getElementById('genBtn').addEventListener('click', function() {
+    const g = id => document.getElementById(id).value;
+
+    const result = `
+    <div class="text-" style="font-family: 'Times New Roman', serif;">
+      <h2 class="text-center font-bold text-base mb-1 uppercase">LESSON PLAN</h2>
+      
+      <table class="w-full border-black border-collapse mb-1">
+        <tr>
+          <td class="border border-black p-1 font-bold w-[15%]">School Name:</td><td class="border border-black p-1 w-[35%]">${g('schoolName')}</td>
+          <td class="border border-black p-1 font-bold w-[15%]">Teacher's name:</td><td class="border border-black p-1 w-[35%]">${g('teacherName')}</td>
+        </tr>
+      </table>
+
+      <table class="w-full border-black border-collapse mb-1 text-center">
+        <tr>
+          <td class="border border-black p-1 font-bold">Term</td><td class="border border-black p-1 font-bold">Date</td>
+          <td class="border border-black p-1 font-bold">Subject</td><td class="border border-black p-1 font-bold">Class</td>
+          <td class="border border-black p-1 font-bold">Unit No</td><td class="border border-black p-1 font-bold">Lesson No</td>
+          <td class="border border-black p-1 font-bold">Duration</td><td class="border border-black p-1 font-bold">Class size</td>
+        </tr>
+        <tr>
+          <td class="border border-black p-1">${g('term')}</td><td class="border border-black p-1">${g('date')}</td>
+          <td class="border border-black p-1">${g('subject')}</td><td class="border border-black p-1">${g('classGrade')}</td>
+          <td class="border border-black p-1">${g('unitNo')}</td><td class="border border-black p-1">${g('lessonNo')}</td>
+          <td class="border border-black p-1">${g('duration')}</td><td class="border border-black p-1">${g('classSize')}</td>
+        </tr>
+      </table>
+
+      <table class="w-full border-black border-collapse mb-1">
+        <tr><td class="border border-black p-1 font-bold w-[35%]">Type of Special Educational Needs</td><td class="border border-black p-1">${g('specialNeeds')}</td></tr>
+        <tr><td class="border border-black p-1 font-bold">Unit title</td><td class="border border-black p-1">${g('unitTitle')}</td></tr>
+        <tr><td class="border border-black p-1 font-bold">Key Unit Competence</td><td class="border border-black p-1">${g('keyCompetence')}</td></tr>
+        <tr><td class="border border-black p-1 font-bold">Title of the lesson</td><td class="border border-black p-1">${g('lessonTitle')}</td></tr>
+        <tr><td class="border border-black p-1 font-bold">Instructional Objective</td><td class="border border-black p-1">${g('objective')}</td></tr>
+        <tr><td class="border border-black p-1 font-bold">Plan for this Class</td><td class="border border-black p-1">${g('planClass')}</td></tr>
+        <tr><td class="border border-black p-1 font-bold">Learning Materials</td><td class="border border-black p-1">${g('materials')}</td></tr>
+        <tr><td class="border border-black p-1 font-bold">References</td><td class="border border-black p-1">${g('references')}</td></tr>
+      </table>
+
+      <table class="w-full border-black border-collapse text-">
+        <tr class="font-bold text-center bg-gray-100">
+          <td class="border border-black p-1 w-[10%]">Timing for each step</td>
+          <td class="border border-black p-1 w-[45%]">Description of teaching and learning activity</td>
+          <td class="border border-black p-1 w-[45%]">Generic competences and Cross-cutting issues</td>
+        </tr>
+        <tr>
+          <td class="border border-black p-1 font-bold align-top">Introduction<br>5 min</td>
+          <td class="border border-black p-1"><b>Teacher:</b> Greet, Review, Introduce topic<br><b>Learner:</b> Respond, Answer, Listen</td>
+          <td class="border border-black p-1 align-top">Communication, Critical thinking</td>
+        </tr>
+        <tr>
+          <td class="border border-black p-1 font-bold align-top">Development<br>30 min</td>
+          <td class="border border-black p-1"><b>Teacher:</b> Explain, Guide groups<br><b>Learner:</b> Work in groups, Present</td>
+          <td class="border border-black p-1 align-top">Cooperation, Creativity, Problem solving</td>
+        </tr>
+        <tr>
+          <td class="border border-black p-1 font-bold align-top">Conclusion<br>5 min</td>
+          <td class="border border-black p-1"><b>Teacher:</b> Summarize, Give homework<br><b>Learner:</b> Listen, Note homework</td>
+          <td class="border border-black p-1 align-top">Lifelong learning, Communication</td>
+        </tr>
+      </table>
+
+      <table class="w-full border-black border-collapse mt-1 text-">
+        <tr>
+          <td class="border border-black p-1 font-bold w-[30%]">Teacher self-evaluation</td>
+          <td class="border border-black p-1">Did all learners achieve objective? Yes/No _____%<br>What needs improvement: ________</td>
+        </tr>
+      </table>
+    </div>
+    `;
+document.getElementById('lessonResult').innerHTML = result;
+document.getElementById('printBtn').classList.remove('hidden');
+
+});
+
+
+// OPEN QUIZ BOX
+document.getElementById('openQuizBtn').addEventListener('click', function(){
+
+  document.getElementById('quiz-box').style.display = 'block';
+
+});
+
+
+// GENERATE QUIZ
+document.getElementById('generateQuizBtn').addEventListener('click', function(){
+
+  let subject = document.getElementById('quizSubject').value;
+  let grade = document.getElementById('quizClass').value;
+  let topic = document.getElementById('quizTopic').value;
+
+  let quiz = `
+  <h3 class="font-bold text-lg">
+  ${subject} ${grade} Quiz
+  </h3>
+
+  <p>Topic: ${topic}</p>
+
+  <p>1. What is the main idea of ${topic}?</p>
+
+  <p>
+  A. Answer one<br>
+  B. Answer two<br>
+  C. Answer three<br>
+  D. Answer four
+  </p>
+  `;
+
+  document.getElementById('quizResult').innerHTML = quiz;
+
+});});// OPEN ASK AI BOX
+document.getElementById('openAskAIBtn').addEventListener('click', function(){
+
+  document.getElementById('ask-ai-box').style.display = 'block';
+
+});
+
+
+// ASK AI FUNCTION
+document.getElementById('askAIBtn').addEventListener('click', function(){
+
+  let question = document.getElementById('aiQuestion').value;
+
+  if(question == ""){
+    alert("Please enter your question");
+    return;
+  }
+
+  let answer = `
+  <h3 class="font-bold text-orange-700">AI Answer:</h3>
+  <p class="mt-2">
+  Your question: ${question}
+  </p>
+
+  <p class="mt-2">
+  This is a demo AI response. Soon it will connect to a real AI model.
+  </p>
+  `;
+
+  document.getElementById('aiResult').innerHTML = answer;
+
+});
+// <- End of JS
+</script> <!-- <- CLOSE SCRIPT FIRST -->
+
+<!-- FIREBASE -->  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>  <script>  
+var firebaseConfig = {  
+  apiKey: "AIzaSyCcDOTAopyqgxBvbfwJJz1CSSMUOUjnfeM",  
+  authDomain: "rwaconnect-v3.firebaseapp.com",  
+  projectId: "rwaconnect-v3",  
+  storageBucket: "rwaconnect-v3.appspot.com",  
+  messagingSenderId: "806912867671",  
+  appId: "1:806912867671:web:27d9a940980d29a0cc9212"  
+};  
+firebase.initializeApp(firebaseConfig);  
+var db = firebase.firestore();  
+var storage = firebase.storage();  
+var auth = firebase.auth();  
+  
+var currentUser = {
+  uid: "",
+  name: ""
+}; 
+  var targetUserId = "";
+// TABS  
+function showTab(tab){
+
+  document.getElementById("home-tab").style.display = "none";
+  document.getElementById("profile-tab").style.display = "none";
+  document.getElementById("chat-tab").style.display = "none";
+  document.getElementById("notif-tab").style.display = "none";
+  document.getElementById("search-tab").style.display = "none";
+
+  document.getElementById(tab + "-tab").style.display = "block";
+
+}
+showTab('home');
+function openProfile(uid, name){
+
+  targetUserId = uid;
+alert("Target User ID: " + targetUserId);
+
+  document.getElementById("profileName").innerText = name;
+  db.collection("users").doc(uid).get().then(function(doc) {
+
+  if (doc.exists && doc.data().photo) {
+    document.getElementById("profileImage").src = doc.data().photo;
+  } else {
+    document.getElementById("profileImage").src = "https://i.pravatar.cc/150";
+  }
+
+});
+  document.getElementById("profilePicInput").style.display = "none";
+document.querySelector("[onclick='uploadProfilePic()']").style.display = "none";
+  var btn = document.getElementById("followBtn");
+
+if(uid == currentUser.uid){
+
+  btn.style.display = "none";
+
+} else {
+
+  btn.style.display = "inline-block";
+
+  db.collection("follows")
+  .where("follower","==",currentUser.uid)
+  .where("following","==",uid)
+  .get()
+  .then(function(snap){
+
+    if(!snap.empty){
+      btn.innerText = "FOLLOWING";
+      btn.className = "bg-green-600 text-white px-6 py-2 rounded-lg mt-3 font-bold";
+    } else {
+      btn.innerText = "FOLLOW";
+      btn.className = "bg-yellow-400 text-blue-900 px-6 py-2 rounded-lg mt-3 font-bold";
+    }
+
+  });
+
+}
+  var followBtn = document.getElementById("followBtn");
+
+if(uid == currentUser.uid){
+  followBtn.style.display = "none";
+}else{
+  followBtn.style.display = "block";
+}
+
+  var followBtn = document.getElementById("followBtn");
+
+  if(uid == currentUser.uid){
+    followBtn.style.display = "none";
+  } else {
+    followBtn.style.display = "inline-block";
+
+    followBtn.setAttribute(
+      "onclick",
+      "toggleFollow('" + uid + "')"
+    );
+  }
+
+loadFollowersCount(uid);
+loadFollowingCount(uid);
+showTab("profile");
+}
+
+function loadFollowingCount(uid) {
+  
+  db.collection("follows")
+    .where("follower", "==", uid)
+    .onSnapshot(function(snap) {
+      
+      document.getElementById("followingCount").innerText = snap.size;
+      
+    });
+  
+}
+// <-- THIS WAS MISSING  
+  
+
+function savePost(content, fileUrl, fileType){  alert("Name: " + currentUser.name);
+  db.collection("posts").add({  
+    uid: currentUser.uid,  
+    author: currentUser.name || currentUser.email || "Anonymous", // this prevents undefined
+    content: content,  
+    fileUrl: fileUrl || "",  
+    fileType: fileType || "",
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  })
+  .then(function(){  
+    document.getElementById("postContent").value = "";  
+    document.getElementById("fileInput").value = "";  
+    document.getElementById("postBtn").innerText = "POST";  
+    document.getElementById("postBtn").disabled = false;  
+    alert("Posted!");
+  })
+  .catch(function(error){
+    console.error(error);
+    alert("Save failed: " + error.message);
+    document.getElementById("postBtn").innerText = "POST";  
+    document.getElementById("postBtn").disabled = false;  
+  });
+}// POST WITH PHOTO/VIDEO
+document.getElementById("postBtn").onclick = function() {
+  
+  var content = document.getElementById("postContent").value;
+  var file = document.getElementById("fileInput").files[0];
+  
+  if (content == "" && !file) {
+    return alert("Write something or add photo/video");
+  }
+  
+  document.getElementById("postBtn").innerText = "UPLOADING...";
+  document.getElementById("postBtn").disabled = true;
+  
+  if (file) {
+    
+    var formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "Rwaconnect");
+    
+    fetch("https://api.cloudinary.com/v1_1/gn26tcrh/auto/upload", {
+        method: "POST",
+        body: formData
+      })
+      .then(function(response) {
+        return response.json();
+      })
+      .then(function(data) {
+        
+        savePost(content, data.secure_url, file.type);
+        
+      })
+      .catch(function(error) {
+        
+        alert(error.message);
+        document.getElementById("postBtn").innerText = "POST";
+        document.getElementById("postBtn").disabled = false;
+        
+      });
+    
+  } else {
+    
+    savePost(content, "", "");
+    
+  }
+  
+};
+  
+// LOAD POSTS WITH LIKE + COMMENT  
+db.collection("posts").onSnapshot(function(snapshot){  
+  var feed = document.getElementById("feed");  
+  feed.innerHTML = "";  
+  snapshot.forEach(function(doc){  
+    var p = doc.data();  
+    var postId = doc.id;  
+    var media = "";  
+    if(p.fileType && p.fileType.startsWith("image/")){  
+      media = "<img src='" + p.fileUrl + "' class='w-full rounded mt-2'>";  
+    }  
+    if(p.fileType && p.fileType.startsWith("video/")){  
+      media = "<video src='" + p.fileUrl + "' controls class='w-full rounded mt-2'></video>";  
+    }  
+var postHTML =
+  "<div class='bg-white p-4 rounded-lg shadow mb-3'>" +
+  "<b onclick=\"openProfile('" + p.uid + "','" + p.author + "')\" class='text-blue-700 cursor-pointer'>" + p.author + "</b>" +
+  "<p class='mt-1'>" + p.content + "</p>" +
+  media +
+  "<div class='flex gap-4 mt-3 border-t pt-2'>" +
+  "<button onclick=\"likePost('" + postId + "','" + p.uid + "')\" class='text-blue-700 font-bold'>Like <span id='like-" + postId + "'>0</span></button>" +
+  "<button onclick=\"showComments('" + postId + "')\" class='text-green-700 font-bold'>Comment</button>" +
+  "</div>" +
+  "<div id='comments-" + postId + "' style='display:none;' class='mt-2'>" +
+  "<div id='comment-list-" + postId + "' class='mb-2'></div>" +
+  "<div class='flex gap-2'>" +
+  "<input id='comment-input-" + postId + "' class='w-full border p-1 rounded' placeholder='Write a comment...'>" +
+  "<button onclick=\"addComment('" + postId + "')\" class='bg-green-600 text-white px-3 rounded'>Send</button>" +
+  "</div>" +
+  "</div>" +
+  "</div>";
+  
+    feed.innerHTML = postHTML + feed.innerHTML;  
+      
+    loadLikes(postId);  
+    loadComments(postId);  
+  });  
+});  
+  
+// FOLLOW
+
+function toggleFollow(uid){  
+
+  if(uid == currentUser.uid){
+    alert("You cannot follow yourself");
+    return;
+  }
+
+  var btn = document.getElementById("followBtn");
+
+  if(btn.innerText == "FOLLOW"){  
+
+    db.collection("follows").add({
+      follower: currentUser.uid,
+      following: uid
+    });
+
+alert("Follow clicked. Sending to: " + uid);
+
+alert("Before notification");
+
+addNotification(
+  uid,
+  currentUser.name + " started following you",
+  currentUser.uid
+);
+
+btn.innerText = "FOLLOWING";  
+btn.className = "bg-green-600 text-white px-6 py-2 rounded-lg mt-3 font-bold";
+  } else {  
+
+    db.collection("follows")
+    .where("follower", "==", currentUser.uid)
+    .where("following", "==", uid)
+    .get()
+    .then(function(snap){  
+      snap.forEach(function(doc){
+        doc.ref.delete();
+      });  
+    });  
+
+    btn.innerText = "FOLLOW";  
+    btn.className = "bg-yellow-400 text-blue-900 px-6 py-2 rounded-lg mt-3 font-bold";  
+
+  }  
+}
+// COUNTS  
+db.collection("follows").where("follower", "==", currentUser.uid).onSnapshot(function(snap){  
+  document.getElementById("followingCount").innerText = snap.size;  
+});  
+db.collection("follows").where("following", "==", targetUserId).onSnapshot(function(snap){
+  document.getElementById("followersCount").innerText = snap.size;  
+});  
+  // CHAT
+
+function sendMessage(){
+
+  var msg = document.getElementById("messageInput").value;
+
+  if(!currentUser){
+    alert("Login first");
+    return;
+  }
+
+  if(!targetUserId){
+    alert("Open a user's profile first");
+    return;
+  }
+
+  if(msg.trim() !== ""){
+
+    db.collection("messages").add({
+      from: currentUser.uid,
+      to: targetUserId,
+      text: msg,
+      time: Date.now()
+    })
+    .then(function(){
+      document.getElementById("messageInput").value = "";
+    })
+    .catch(function(error){
+      console.log(error);
+    });
+
+  }
+
+}
+
+
+db.collection("messages")
+.orderBy("time")
+.onSnapshot(function(snapshot){
+
+  if(!currentUser) return;
+
+  var chat = document.getElementById("chatBox");
+  chat.innerHTML = "";
+
+  snapshot.forEach(function(doc){
+
+    var m = doc.data();
+
+    if(m.from === currentUser.uid || m.to === currentUser.uid){
+
+      chat.innerHTML +=
+      "<div class='bg-yellow-100 p-2 rounded mb-1'>" +
+      m.text +
+      "</div>";
+
+    }
+
+  });
+
+});
+
+// LIKE + COMMENT  
+
+function likePost(postId) {
+  
+  db.collection("likes")
+    .where("postId", "==", postId)
+    .where("user", "==", currentUser.uid)
+    .get()
+    .then(function(snap) {
+      
+      if (snap.empty) {
+        
+        db.collection("likes").add({
+          postId: postId,
+          user: currentUser.uid
+        });
+        
+      }
+      
+    });
+  
+}
+function loadLikes(postId){  
+  db.collection("likes").where("postId", "==", postId).onSnapshot(function(snap){  
+    document.getElementById('like-' + postId).innerText = snap.size;  
+  });  
+}  
+  
+function showComments(postId){  
+  var box = document.getElementById('comments-' + postId);  
+  box.style.display = box.style.display == 'none'? 'block' : 'none';  
+}  
+  
+function addComment(postId){  
+  var input = document.getElementById('comment-input-' + postId);  
+  var text = input.value;  
+  if(text!= ""){  
+    db.collection("comments").add({  
+      postId: postId,  
+      user: currentUser.name,  
+      text: text  
+    });  
+    input.value = "";  
+  }  
+}  
+  
+function loadComments(postId){  
+  db.collection("comments").where("postId", "==", postId).onSnapshot(function(snap){  
+    var list = document.getElementById('comment-list-' + postId);  
+    list.innerHTML = "";  
+    snap.forEach(function(doc){  
+      var c = doc.data();  
+      list.innerHTML = list.innerHTML + "<div class='bg-gray-100 p-2 rounded mb-1'><b>" + c.user + ":</b> " + c.text + "</div>";  
+    });  
+  });  
+}  
+var auth = firebase.auth();  
+  
+function signUp(){
+
+var username = document.getElementById("usernameInput").value;
+var email = document.getElementById("emailInput").value;
+var password = document.getElementById("passwordInput").value;
+
+auth.createUserWithEmailAndPassword(email, password)
+.then(function(result){
+
+  return db.collection("users").doc(result.user.uid).set({
+    username: username,
+    email: email
+  });
+
+})
+.then(function(){
+  alert("Account created and user saved");
+})
+.catch(function(error){
+  alert(error.message);
+});}
+
+function logout(){  
+  auth.signOut().then(function(){  
+    location.reload();  
+  });  
+}
+  
+function signIn(){  
+  var email = document.getElementById("emailInput").value;  
+  var password = document.getElementById("passwordInput").value;  
+
+  auth.signInWithEmailAndPassword(email, password)
+  .then(function(userCredential) {
+
+    alert("Login successful");
+
+currentUser.uid = userCredential.user.uid;
+
+
+  
+    document.getElementById("login-screen").style.display = "none";  
+    document.getElementById("app-screen").style.display = "block";  
+
+    db.collection("users").doc(userCredential.user.uid).get()
+    .then(function(doc){
+
+      if(doc.exists){
+
+        var username = doc.data().username;
+
+        currentUser = {
+          uid: userCredential.user.uid,
+          name: username
+        };
+db.collection("messages")
+  .where("to", "==", currentUser.uid)
+  .onSnapshot(function(snapshot) {
+    
+    var inbox = document.getElementById("inboxList");
+    inbox.innerHTML = "";
+    
+    snapshot.forEach(function(doc) {
+      
+      var m = doc.data();
+      
+      db.collection("users").doc(m.from).get()
+        .then(function(userDoc) {
+          
+          var senderName = "Unknown";
+          
+          if (userDoc.exists) {
+            senderName = userDoc.data().username;
+          }
+          
+          inbox.innerHTML +=
+            "<div class='bg-blue-100 p-2 rounded mb-2'>" +
+            "<b>" + senderName + "</b><br>" +
+            m.text +
+            "</div>";
+          
+        });
+      
+    });
+    
+  });
+
+        document.getElementById("profileName").innerText = username;
+if (doc.data().photo) {
+  document.getElementById("profileImage").src = doc.data().photo;
+}
+
+        loadNotifications();
+
+      } else {
+        document.getElementById("profileName").innerText = "No username";
+      }
+
+    });
+
+  })  
+  .catch(function(error){  
+    alert(error.message);  
+  });  
+}
+function addNotification(toUser, message, fromUser){
+
+  db.collection("notifications").add({
+   user: toUser,
+    message: message,
+    from: fromUser,
+    type: "follow",
+    time: Date.now()
+  })
+  .then(function(){
+    alert("Notification saved");
+  })
+  .catch(function(error){
+    alert("Notification error: " + error.message);
+  });
+
+}
+ function loadNotifications() {
+
+  db.collection("notifications")
+  .where("user", "==", currentUser.uid)
+  .orderBy("time", "desc")
+  .onSnapshot(function(snapshot) {
+
+    var list = document.getElementById("notifications-list");
+    var count = document.getElementById("notifCount");
+
+    list.innerHTML = "";
+    count.innerText = snapshot.size;
+
+    if (snapshot.empty) {
+      list.innerHTML = "<p class='text-gray-400'>No notifications yet</p>";
+      return;
+    }
+
+    snapshot.forEach(function(doc) {
+
+      var n = doc.data();
+
+list.innerHTML +=
+  "<div class='bg-green-100 p-3 rounded mb-2'>" +
+  n.message +
+  "<br><button onclick=\"followBack('" + n.from + "')\" class='bg-blue-600 text-white px-3 py-1 rounded mt-2'>FOLLOW BACK</button>" +
+  "</div>";
+
+    });
+
+    if (snapshot.size > 0) {
+      alert("🔔 You have " + snapshot.size + " notification(s).");
+    }
+
+  });
+}
+function openMyProfile(){
+
+  document.getElementById("profileName").innerText = currentUser.name;
+
+  document.getElementById("followBtn").style.display = "none";
+
+  document.getElementById("profilePicInput").style.display = "block";
+
+  document.querySelector("button[onclick='uploadProfilePic()']").style.display = "inline-block";
+
+  showTab("profile");
+}
+
+ function followBack(uid){
+
+  db.collection("follows").add({
+    follower: currentUser.uid,
+    following: uid
+  });
+
+  alert("Followed back");
+
+}  function uploadProfilePic() {
+
+  var file = document.getElementById("profilePicInput").files[0];
+
+  if (!file) {
+    alert("Choose a picture first");
+    return;
+  }
+
+  var formData = new FormData();
+  formData.append("file", file);
+  formData.append("upload_preset", "Rwaconnect");
+
+  fetch("https://api.cloudinary.com/v1_1/gn26tcrh/image/upload", {
+    method: "POST",
+    body: formData
+  })
+  .then(response => response.json())
+  .then(data => {
+
+
+alert(currentUser.uid);
+
+db.collection("users").doc(String(currentUser.uid)).set({
+  photo: data.secure_url
+}, { merge: true });
+
+    document.getElementById("profileImage").src = data.secure_url;
+
+    alert("Profile picture changed successfully!");
+
+  })
+  .catch(function(error) {
+    alert(error);
+  });
+
+} function searchUsers() {
+
+  var name = document.getElementById("searchInput").value;
+
+  db.collection("users")
+    .where("username", "==", name)
+    .get()
+    .then(function(snapshot) {
+
+      var results = document.getElementById("searchResults");
+      results.innerHTML = "";
+
+      snapshot.forEach(function(doc) {
+
+        var user = doc.data();
+
+        results.innerHTML +=
+          "<div class='p-2 border rounded mb-2'>" +
+          "<b>" + user.username + "</b><br>" +
+          "<button onclick=\"openProfile('" + doc.id + "','" + user.username + "')\">View Profile</button>" +
+          "</div>";
+
+      });
+
+    });}
+
+function showTab(tab){
+
+  document.getElementById("home-tab").style.display = "none";
+  document.getElementById("profile-tab").style.display = "none";
+  document.getElementById("chat-tab").style.display = "none";
+  document.getElementById("notif-tab").style.display = "none";
+  document.getElementById("search-tab").style.display = "none";
+  document.getElementById("education-tab").style.display = "none";
+
+  document.getElementById(tab + "-tab").style.display = "block";
+
+}function openLessonPlan(){
+
+  document.getElementById("lesson-plan-box").style.display = "block";
+
+}
+
+
+function generateLessonPlan(){
+
+var subject = document.getElementById("lessonSubject").value;
+var grade = document.getElementById("lessonClass").value;
+var topic = document.getElementById("lessonTopic").value;
+var time = document.getElementById("lessonTime").value;
+
+
+document.getElementById("lessonResult").innerHTML =
+
+"<h3 class='font-bold text-blue-700'>Lesson Plan</h3>" +
+
+"<b>Subject:</b> " + subject + "<br>" +
+"<b>Class:</b> " + grade + "<br>" +
+"<b>Topic:</b> " + topic + "<br>" +
+"<b>Duration:</b> " + time + "<br><br>" +
+
+"<b>Introduction:</b><br>" +
+"Teacher introduces the topic and asks learners questions.<br><br>" +
+
+"<b>Main Activity:</b><br>" +
+"Teacher explains the concept. Learners participate in activities.<br><br>" +
+
+"<b>Assessment:</b><br>" +
+"Ask questions and give exercises.";
+
+}function loadNotifications(){
+
+  db.collection("notifications")
+  .where("user","==",currentUser.uid)
+  .onSnapshot(function(snapshot){
+
+    let box = document.getElementById("notifications-list");
+    box.innerHTML = "";
+
+    snapshot.forEach(function(doc){
+
+      let data = doc.data();
+
+      if(data.type == "follow"){
+
+        box.innerHTML += `
+
+        <div class="bg-white p-3 mb-2 rounded shadow">
+
+          <p>${data.message}</p>
+
+          <button onclick="followBack('${data.from}')"
+          class="bg-blue-600 text-white px-3 py-1 rounded mt-2">
+          Follow Back
+          </button>
+
+        </div>
+
+        `;
+
+      }
+
+    });
+
+  });
+
+}function followBack(uid){
+
+  db.collection("follows").add({
+
+    follower: currentUser.uid,
+    following: uid
+
+  })
+  .then(function(){
+
+    alert("Followed back");
+
+  });
+
+}
+</script>  </body>  
+</html>  
